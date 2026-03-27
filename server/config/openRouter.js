@@ -23,7 +23,7 @@ export const generateResponse = async (prompt) => {
     });
 
 if(!res.ok){
-    const err=await res.text()
+    const err = await res.text();
     throw new Error("openRouter err"+err)
 }
 

@@ -170,6 +170,9 @@ export const generateWebsite = async (req, res) => {
         const finalPrompt = masterPrompt.replace("USER_PROMPT", prompt)
         let raw = ""
         let parsed = null
+        //we try to get the response from ai and parse it into json
+        //if it fails we try again with a modified prompt and redo the creayipon
+
         for (let i = 0; i < 2 && !parsed; i++) {
             raw = await generateResponse(finalPrompt)
             parsed = await extractJson(raw)
@@ -185,7 +188,7 @@ export const generateWebsite = async (req, res) => {
             console.log("ai returned invalid response", raw)
             return res.status(400).json({ message: "ai returned invalid response" })
         }
-
+        //we save the website in the database
         const website = await Website.create({
             user: user._id,
             title: prompt.slice(0, 60),

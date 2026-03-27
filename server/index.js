@@ -20,8 +20,8 @@ app.use(cors({
     origin:"http://localhost:5173",
     credentials:true
 }))
-app.use( ( req, res,next)=>{
-    console.log (req.timestamp,req.url,req.method)
+app.use(( req, res, next)=>{
+    console.log(new Date().toISOString(), req.url, req.method)
     next()
 })
 app.use("/api/auth",authRouter)
