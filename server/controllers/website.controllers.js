@@ -167,7 +167,7 @@ export const generateWebsite = async (req, res) => {
             return res.status(400).json({ message: "you have not enough credits to generate a webiste" })
         }
 
-        const finalPrompt = masterPrompt.replace("USER_PROMPT", prompt)
+        const finalPrompt = masterPrompt.replace("{USER_PROMPT}", prompt)
         let raw = ""
         let parsed = null
         //we try to get the response from ai and parse it into json
@@ -215,6 +215,7 @@ export const generateWebsite = async (req, res) => {
         })
 
     } catch (error) {
+        console.log("GENERATE ERROR:", error)
         return res.status(500).json({ message: `generate website error ${error}` })
     }
 }
