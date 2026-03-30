@@ -5,6 +5,8 @@ import { motion } from "motion/react"
 import { useState } from 'react'
 import axios from "axios"
 import { serverUrl } from '../App'
+import { useDispatch, useSelector } from 'react-redux'
+import { setUserData } from '../redux/userSlice'
 
 const PHASES = [
     "Analyzing your idea…",
@@ -15,11 +17,13 @@ const PHASES = [
 ];
 function Generate() {
     const navigate = useNavigate()
+    const { userData } = useSelector(state => state.user)
     const [prompt, setPrompt] = useState("")
     const [loading, setLoading] = useState(false)
     const [progress, setProgress] = useState(0)
     const [phaseIndex, setPhaseIndex] = useState(0)
     const [error,setError]=useState("")
+    const dispatch = useDispatch()
     const handleGenerateWebsite = async () => {
         setLoading(true)
         try {
@@ -27,10 +31,15 @@ function Generate() {
             console.log(result)
             setProgress(100)
             setLoading(false)
+            // Update credits in Redux state immediately
+            dispatch(setUserData({
+                ...userData,
+                credits: result.data.remainingCredits
+            }))
             navigate(`/editor/${result.data.websiteId}`)
         } catch (error) {
             setLoading(false)
-            setError(error.response.data.message || "something went wrong")
+            setError(error.response?.data?.message || "something went wrong")
             console.log(error)
         }
     }

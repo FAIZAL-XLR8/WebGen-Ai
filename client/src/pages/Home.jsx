@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from "motion/react"
 import LoginModal from '../components/LoginModal'
+import LogoutModal from '../components/LogoutModal'
 import { useDispatch, useSelector } from 'react-redux'
 import { Coins } from "lucide-react"
 import { serverUrl } from '../App'
@@ -21,16 +22,7 @@ function Home() {
     const [websites, setWebsites] = useState(null)
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const handleLogOut = async () => {
-        console.log("logout click")
-        try {
-            await axios.get(`${serverUrl}/api/auth/logout`, { withCredentials: true })
-            dispatch(setUserData(null))
-            setOpenProfile(false)
-        } catch (error) {
-            console.log(error)
-        }
-    }
+    const [openLogout, setOpenLogout] = useState(false)
 
     useEffect(() => {
         if (!userData) return;
@@ -107,7 +99,7 @@ function Home() {
                                                 </button>
 
                                                 <button className='w-full px-4 py-3 text-left text-sm hover:bg-white/5' onClick={() => navigate("/dashboard")}>Dashboard</button>
-                                                <button className='w-full px-4 py-3 text-left text-sm text-red-400 hover:bg-white/5' onClick={handleLogOut}>Logout</button>
+                                                <button className='w-full px-4 py-3 text-left text-sm text-red-400 hover:bg-white/5' onClick={() => { setOpenLogout(true); setOpenProfile(false); }}>Logout</button>
 
                                             </motion.div>
                                         </>
@@ -209,6 +201,7 @@ function Home() {
             </footer>
 
             {openLogin && <LoginModal open={openLogin} onClose={() => setOpenLogin(false)} />}
+            {openLogout && <LogoutModal open={openLogout} onClose={() => setOpenLogout(false)} />}
 
         </div>
     )
