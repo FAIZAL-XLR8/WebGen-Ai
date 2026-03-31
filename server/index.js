@@ -13,7 +13,7 @@ import { stripeWebhook } from "./controllers/stripeWebhook.controller.js"
 const app=express()
 
 app.post("/api/stripe/webhook",express.raw({type:"application/json"}),stripeWebhook)
-const port=process.env.PORT || 5000
+const port=process.env.PORT || 8000
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
