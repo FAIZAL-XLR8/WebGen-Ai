@@ -122,9 +122,12 @@ export const verifyCheckoutSession = async (req, res) => {
       plan.price
     );
 
+    const updatedUser = await User.findById(userId);
+
     return res.status(200).json({
       success: true,
       message: 'Payment verified. Credits added to your account.',
+      user: updatedUser,
     });
   } catch (error) {
     console.error('Error verifying Razorpay payment:', error);
