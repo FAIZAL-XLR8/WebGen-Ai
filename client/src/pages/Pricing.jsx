@@ -3,7 +3,8 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
 import { motion } from "motion/react"
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserData } from '../redux/userSlice';
 import axios from 'axios';
 import { serverUrl } from '../App';
 const plans = [
@@ -53,8 +54,9 @@ const plans = [
 ];
 function Pricing() {
     const navigate = useNavigate()
-  const {userData}=useSelector(state=>state.user)
-  const [loading,setLoading]=useState(null)
+    const dispatch = useDispatch()
+    const {userData}=useSelector(state=>state.user)
+    const [loading,setLoading]=useState(null)
     const handleBuy = async (planKey) => {
         if (!userData) {
             navigate("/")
@@ -82,7 +84,7 @@ function Pricing() {
                 key: data.key,
                 amount: data.amount,
                 currency: data.currency,
-                name: "GenWeb.ai",
+                name: "WebGen.ai",
                 description: `Upgrade to ${planKey} plan`,
                 order_id: data.orderId,
                 handler: async function (response) {
@@ -99,6 +101,9 @@ function Pricing() {
                         );
 
                         if (verifyRes.data.success) {
+                            if (verifyRes.data.user) {
+                                dispatch(setUserData(verifyRes.data.user));
+                            }
                             alert(verifyRes.data.message || "Payment successful!");
                             navigate("/dashboard");
                         } else {
