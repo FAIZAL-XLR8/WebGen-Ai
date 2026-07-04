@@ -8,6 +8,12 @@ const confirmUserPayment = async (userId, planType, orderId, paymentId, signatur
   const plan = PLANS[planType];
   if (!plan) throw new Error(`Unknown plan type: ${planType}`);
 
+  // Check if already paid to prevent double processing
+  const existing = await Payment.findOne({ razorpayOrderId: orderId, paymentStatus: 'paid' });
+  if (existing) {
+    return;
+  }
+
   // Update user credits and plan
   await User.findByIdAndUpdate(
     userId,
