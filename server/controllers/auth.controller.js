@@ -23,8 +23,8 @@ try {
 
     return res.status(200).json(user)
 } catch (error) {
-    
-    return res.status(500).json({message:`google auth error ${error}`})
+    console.error("googleAuth error:", error)
+    return res.status(500).json({message:`google auth error ${error.message}`})
 }
 }
 
