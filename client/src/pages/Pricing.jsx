@@ -55,24 +55,83 @@ function Pricing() {
     const navigate = useNavigate()
   const {userData}=useSelector(state=>state.user)
   const [loading,setLoading]=useState(null)
-    const handleBuy=async (planKey)=>{
-if(!userData){
-navigate("/")
-return
-}
-if(planKey=="free"){
-    navigate("/dashboard")
-    return
-}
-setLoading(planKey)
-try {
-    const result=await axios.post(`${serverUrl}/api/billing`,{planType:planKey},{withCredentials:true})
-    window.location.href=result.data.sessionUrl
-} catch (error) {
-    console.log(error)
-    setLoading(null)
-}
+    const handleBuy = async (planKey) => {
+        if (!userData) {
+            navigate("/")
+            return
+        }
+        if (planKey == "free") {
+            navigate("/dashboard")
+            return
+        }
+        setLoading(planKey)
+        try {
+            const { data } = await axios.post(
+                `${serverUrl}/api/payment/create-order`,
+                { planType: planKey },
+                { withCredentials: true }
+            );
 
+            if (!data.success) {
+                alert(data.message || "Failed to create order");
+                setLoading(null);
+                return;
+            }
+
+            const options = {
+                key: data.key,
+                amount: data.amount,
+                currency: data.currency,
+                name: "GenWeb.ai",
+                description: `Upgrade to ${planKey} plan`,
+                order_id: data.orderId,
+                handler: async function (response) {
+                    try {
+                        const verifyRes = await axios.post(
+                            `${serverUrl}/api/payment/verify`,
+                            {
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                                planType: planKey
+                            },
+                            { withCredentials: true }
+                        );
+
+                        if (verifyRes.data.success) {
+                            alert(verifyRes.data.message || "Payment successful!");
+                            navigate("/dashboard");
+                        } else {
+                            alert(verifyRes.data.message || "Verification failed");
+                        }
+                    } catch (err) {
+                        console.error("Verification error:", err);
+                        alert(err.response?.data?.message || "Payment verification failed.");
+                    } finally {
+                        setLoading(null);
+                    }
+                },
+                prefill: {
+                    name: data.user?.name || "",
+                    email: data.user?.email || ""
+                },
+                theme: {
+                    color: "#6366f1"
+                },
+                modal: {
+                    ondismiss: function () {
+                        setLoading(null);
+                    }
+                }
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+        } catch (error) {
+            console.error("Payment error:", error);
+            alert(error.response?.data?.message || "Failed to initiate payment. Please try again.");
+            setLoading(null);
+        }
     }
     return (
         <div className='relative min-h-screen overflow-hidden bg-[#050505] text-white px-6 pt-16 pb-24'>

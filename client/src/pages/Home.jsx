@@ -50,7 +50,7 @@ function Home() {
             >
                 <div className='max-w-7xl mx-auto px-6 py-4 flex justify-between items-center'>
                     <div className='text-lg font-semibold'>
-                        GenWeb.ai
+                        WebGen.ai
                     </div>
                     <div className='flex items-center gap-5'>
                         <div className='hidden md:inline text-sm text-zinc-400 hover:text-white cursor-pointer' onClick={() => navigate("/pricing")}>
@@ -150,7 +150,7 @@ function Home() {
                         >
                             <h1 className='text-xl font-semibold mb-3'>{h}</h1>
                             <p className='text-sm text-zinc-400'>
-                                GenWeb.ai builds real websites — clean code,
+                                WebGen.ai builds real websites — clean code,
                                 animations, responsiveness and scalable structure.
                             </p>
 
@@ -197,7 +197,7 @@ function Home() {
 
 
             <footer className='border-t border-white/10 py-10 text-center text-sm text-zinc-500'>
-                &copy; {new Date().getFullYear()} GenWeb.ai
+                &copy; {new Date().getFullYear()} WebGen.ai
             </footer>
 
             {openLogin && <LoginModal open={openLogin} onClose={() => setOpenLogin(false)} />}
